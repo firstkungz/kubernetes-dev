@@ -1,1 +1,4 @@
 training-kube-sa.json
+kubeconfig.yaml
+kube-config-example.yaml
+instruction.txt

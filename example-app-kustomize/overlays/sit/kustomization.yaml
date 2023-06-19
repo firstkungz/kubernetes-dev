@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+images:
+  - name: asia.gcr.io/poc-innovation-iot/training-kube/example-app
+    newTag: v1.4
+
+configMapGenerator:
+  - behavior: merge
+    envs:
+      - configs/config.env
+    name: example-app-configmap-env
+  - behavior: merge
+    files:
+      - configs/config.yaml
+    name: example-app-configmap-file
+
+secretGenerator:
+  - behavior: merge
+    envs:
+      - secrets/secret.env
+    name: example-app-secret-env
+
+patchesStrategicMerge:
+  - patches/set_resources.yaml
