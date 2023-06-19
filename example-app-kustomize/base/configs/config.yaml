@@ -1,1 +1,2 @@
-BASE_CONFIG=yyy
+server:
+  somebasedconfig: based
