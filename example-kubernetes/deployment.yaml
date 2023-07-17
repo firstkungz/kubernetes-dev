@@ -22,10 +22,20 @@ spec:
           env:
             - name: TEST
               value: someconfigenv
+          envFrom:
+            - secretRef:
+                name: first-test-secret
           volumeMounts:
             - name: first-test-config-volume
               mountPath: /config
               readOnly: true
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
       volumes:
         - name: first-test-config-volume
           configMap:
