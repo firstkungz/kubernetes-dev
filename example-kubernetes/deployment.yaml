@@ -19,3 +19,14 @@ spec:
           image: nginx:latest
           ports:
             - containerPort: 80
+          env:
+            - name: TEST
+              value: someconfigenv
+          volumeMounts:
+            - name: first-test-config-volume
+              mountPath: /config
+              readOnly: true
+      volumes:
+        - name: first-test-config-volume
+          configMap:
+            name: first-test-config
