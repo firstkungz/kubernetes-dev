@@ -2,20 +2,22 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/labstack/echo/v4"
 
-	"github.com/spf13/viper"
 	"net/http"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 func main() {
-	DumpConfig()
+	ReadConfig()
 	DumpEnv()
 	RunBasicHTTP()
 }
 
-func DumpConfig() {
+func ReadConfig() {
 	viper.AddConfigPath("/configs")
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config") // Register config file name (no extension)
@@ -24,6 +26,10 @@ func DumpConfig() {
 
 	// Dump all config
 	fmt.Println(viper.AllSettings())
+
+	someConfig := os.Getenv("SOMECONFIGKEY")
+	fmt.Printf("Config is : %s", someConfig)
+
 }
 
 func DumpEnv() {
