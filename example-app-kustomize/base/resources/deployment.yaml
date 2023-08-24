@@ -33,14 +33,14 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 8080
             timeoutSeconds: 10
             initialDelaySeconds: 10
             periodSeconds: 20
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 8080
             timeoutSeconds: 10
             initialDelaySeconds: 10
