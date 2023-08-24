@@ -13,7 +13,6 @@ import (
 
 func main() {
 	ReadConfig()
-	DumpEnv()
 	RunBasicHTTP()
 }
 
@@ -32,12 +31,6 @@ func ReadConfig() {
 	someConfig := os.Getenv("SOMECONFIGKEY")
 	fmt.Printf("Env Config is : %s", someConfig)
 
-}
-
-func DumpEnv() {
-	for _, env := range os.Environ() {
-		fmt.Println(env)
-	}
 }
 
 func RunBasicHTTP() {
