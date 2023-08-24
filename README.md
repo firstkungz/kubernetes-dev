@@ -1,61 +1,37 @@
 # kubernetes-dev
 
 Prerequisites for this training
-Homebrew
+- Homebrew
 https://brew.sh/
 
-Docker
-https://docs.docker.com/desktop/install/mac-install/
+- Docker https://docs.docker.com/desktop/install/mac-install/
 
-```
-gcloud command
-```
 
-Install the gcloud CLI | Google Cloud
-ทดลอง run gcloud command ว่าใช้งานได้ปกติ จะแสดงว่าเรายังไม่ login อะไรเลย (ถ้าพึ่งลง)
+- gcloud command - Install the gcloud CLI | Google Cloud 
 
-```
-gcloud auth list
-```
+    Then you will sent to website, select the user need to login with google cloud.
+    ```
+    gcloud auth login
+    gcloud auth list
+    ```
 
-และทำการ login ด้วย account ตัวเอง
 
-gcloud auth login
-ให้เลือก Y เพื่อ login ด้วย account google ของเราและเลือก account google ที่เราจะใช้งานในหน้า website (หรือ login ใน website ถ้าไม่เคย login with google)
-เมื่อเรียบร้อยทดสอบ run gcloud auth list อีกทีจะแสดง email ที่เราพึ่ง login ไป เป็นอันเสร็จสิ้น
+- kubectl command
+    ```
+    brew install kubectl
+    ```
 
-kubectl command
+    Check that kubectl is installed
 
-```
-brew install kubectl
-```
+    ```
+    kubectl version
+    ```
 
-Check version command
+## Exercise 1 Kubernetes Basic command line
 
-```
-kubectl version
-```
-
-ให้ check เลข version ให้ตัว GitVersion ของ Client >= 1.19.1 น่าจะ ok แล้ว
-
-```
-Client Version: version.Info{Major:"1", Minor:"19", GitVersion:"v1.19.1", GitCommit:"206bcadf021e76c27513500ca24182692aabd17e", GitTreeState:"clean", BuildDate:"2020-09-09T19:10:21Z", GoVersion:"go1.15.1", Compiler:"gc", Platform:"darwin/amd64"}
-```
+This exerise willl run under example-kubernetes folder
 
 ### Connect to Kubernetes on GCP
-
-Import service account
-
-```
-gcloud auth activate-service-account --key-file=training-kube-sa.json
-```
-
-Verify that service account is active on gcloud command
-
-```
-ACTIVE ACCOUNT
-* training-kube@poc-innovation-iot.iam.gserviceaccount.com
-```
 
 Import config from GKE
 
@@ -70,8 +46,6 @@ kubectl get nodes
 ```
 
 ---
-
-## Kubernetes Basic command
 
 ### Example 1 - Try to get list resources with command
 
@@ -128,7 +102,9 @@ kubectl edit svc/docker-registry
 
 ---
 
-## Apply kustomize for deployment
+## Exercise 2 Try kustomize for deployment
+
+This exerise willl run under example-kustomize folder
 
 Build kustomize into script for deployment
 Example for overlays sit
@@ -144,4 +120,88 @@ kustomize build {path_to_kustomize} | kubectl apply -n {namespace} -f -
 ```
 
 After this you need to try yourself for editing some of kustomize following readme.MD in example-app-kustomize
-and you're finish this :)
+
+
+## Exercise 3 From code to running service
+Now if we have the http service that can running, how we can make it from nothing to running in kubernetes
+
+\* 
+This exerise willl run under example-app, example-app-kustomize folder, This example is golang and echo.
+
+### Health check
+This example is for golang
+The thing that we need is the http server that running and response HTTP 200 OK status.
+Kubernetes will try to ping that the service is running, If not running it will restart the pods
+
+
+```
+e.GET("/", func(c echo.Context) error {
+    return c.String(http.StatusOK, "Health Check!")
+})
+```
+    
+### Config injection
+
+The next thing we need to do is how config injection into services
+
+
+Service read config (contain both file and env example, you can select which ways to do)
+```
+	// Loading env config of path /configs/config.yaml
+	viper.AddConfigPath("/configs")
+	viper.AddConfigPath(".")
+	viper.SetConfigName("config") // Register config file name (no extension)
+	viper.SetConfigType("yaml")   // Look for specific type
+	viper.ReadInConfig()
+
+	// Try to Dump all config from file by viper
+	fmt.Println(viper.AllSettings())
+
+	// Loading env config of key SOMECONFIGKEY
+	someConfig := os.Getenv("SOMECONFIGKEY")
+	fmt.Printf("Env Config is : %s", someConfig)
+```
+
+
+### Build docker image
+
+The thing before we can run service in kubernetes, we need to packaging it inside the container, so we need to build the dockerfile for packaging our service.
+
+You can see some explanation in Dockerfile
+
+After you built the docker image, then we need to push the docker image to cloud
+
+
+### Deployment by kustomize
+
+You need to ensure that image, tag that we push in the kustomization.yaml is correct
+
+file example-app-kustomize/overlays/sit/kustomization.yaml
+```
+images:
+  - name: asia.gcr.io/poc-innovation-iot/training-kube/example-app
+    newTag: v1.4
+```
+
+Then the configuration you need to enter the require configuration
+- Env - go to example-app-kustomize/overlays/sit/configs/config.env file
+- File - go to example-app-kustomize/overlays/sit/configs/config.yaml file
+
+For specifies the resources to be use example-app-kustomize/overlays/sit/patches/set_resources.yaml
+```
+resources:
+    limits:
+        cpu: 200m
+        memory: 512Mi
+    requests:
+        cpu: 200m
+        memory: 512Mi
+```
+
+Then apply the kustomize to kubernetes
+
+```
+kustomize build ./example-app-kustomize/overlays/sit | kubectl apply -n {namespace} -f -
+```
+
+Then we finished on deployment service into kubernetes

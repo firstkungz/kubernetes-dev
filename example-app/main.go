@@ -18,17 +18,19 @@ func main() {
 }
 
 func ReadConfig() {
+	// Loading env config of path /configs/config.yaml
 	viper.AddConfigPath("/configs")
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config") // Register config file name (no extension)
 	viper.SetConfigType("yaml")   // Look for specific type
 	viper.ReadInConfig()
 
-	// Dump all config
+	// Try to Dump all config from file by viper
 	fmt.Println(viper.AllSettings())
 
+	// Loading env config of key SOMECONFIGKEY
 	someConfig := os.Getenv("SOMECONFIGKEY")
-	fmt.Printf("Config is : %s", someConfig)
+	fmt.Printf("Env Config is : %s", someConfig)
 
 }
 

@@ -1,9 +1,7 @@
-# Source: https://medium.com/@chemidy/create-the-smallest-and-secured-golang-docker-image-based-on-scratch-4752223b7324
+FROM golang:1.20 as builder
 ############################
-# STEP 1 build executable binary
+# STEP 1 Build golang images
 ############################
-
-FROM golang:1.19-alpine as builder
 
 # Install git + SSL ca certificates.
 # Git is required for fetching the dependencies.
@@ -37,7 +35,7 @@ COPY . .
 RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/app ./
 
 ############################
-# STEP 2 build a small image
+# STEP 2 running service in a small image
 ############################
 FROM alpine
 ARG SERVICE
