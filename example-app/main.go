@@ -35,8 +35,8 @@ func ReadConfig() {
 
 func RunBasicHTTP() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Health Check!")
+	e.GET("/health", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Liveness Check!")
 	})
 	e.Logger.Fatal(e.Start(":8080"))
 }

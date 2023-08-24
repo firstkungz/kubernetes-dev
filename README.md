@@ -169,7 +169,15 @@ The thing before we can run service in kubernetes, we need to packaging it insid
 
 You can see some explanation in Dockerfile
 
+```
+docker build -t asia.gcr.io/poc-innovation-iot/training-kube/example-app:v1.5 .
+```
+
 After you built the docker image, then we need to push the docker image to cloud
+
+```
+docker push asia.gcr.io/poc-innovation-iot/training-kube/example-app:v1.5
+```
 
 
 ### Deployment by kustomize

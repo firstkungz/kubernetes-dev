@@ -1,12 +1,8 @@
-FROM golang:1.20 as builder
+FROM golang:1.21 as builder
 ############################
 # STEP 1 Build golang images
 ############################
 
-# Install git + SSL ca certificates.
-# Git is required for fetching the dependencies.
-# Ca-certificates is required to call HTTPS endpoints.
-RUN apk update && apk add --no-cache git ca-certificates && update-ca-certificates
 # Create appuser
 ENV USER=appuser
 ENV UID=10001
