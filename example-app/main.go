@@ -17,7 +17,7 @@ func main() {
 }
 
 func ReadConfig() {
-	// Loading env config of path /configs/config.yaml
+	// Loading file config of path /configs/config.yaml
 	viper.AddConfigPath("/configs")
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config") // Register config file name (no extension)
