@@ -1,6 +1,6 @@
 # kubernetes-dev
 
-Prerequisites for this training
+Prerequisites 
 - Homebrew
 https://brew.sh/
 
