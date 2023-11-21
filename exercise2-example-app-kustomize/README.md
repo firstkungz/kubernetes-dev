@@ -48,11 +48,11 @@ spec:
         - name: app 
           resources:
             limits:
-              cpu: 500m
-              memory: 256Mi
+              cpu: 50m
+              memory: 64Mi
             requests:
-              cpu: 250m
-              memory: 128Mi
+              cpu: 25m
+              memory: 32Mi
 
 ```
 # Project's Additional Request 
@@ -82,9 +82,9 @@ spec:
         initialDelaySeconds: 10
       resources:
         limits:
-          cpu: 500m
-          memory: 128Mi
-        requests:
-          cpu: 400m
+          cpu: 50m
           memory: 64Mi
+        requests:
+          cpu: 25m
+          memory: 32Mi
 ```

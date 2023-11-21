@@ -47,11 +47,11 @@ spec:
             periodSeconds: 15
           resources:
             limits:
-              cpu: 500m
-              memory: 256Mi
+              cpu: 50m
+              memory: 64Mi
             requests:
-              cpu: 400m
-              memory: 256Mi
+              cpu: 25m
+              memory: 32Mi
           volumeMounts:
             - name: example-app-configmap-file
               mountPath: /configs/config.yaml

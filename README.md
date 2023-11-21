@@ -6,7 +6,6 @@ https://brew.sh/
 
 - Docker https://docs.docker.com/desktop/install/mac-install/
 
-
 - gcloud command - Install the gcloud CLI | Google Cloud 
 
     Then you will sent to website, select the user need to login with google cloud.
@@ -15,21 +14,19 @@ https://brew.sh/
     gcloud auth list
     ```
 
-
-- kubectl command
+- kubectl + kustomize command
     ```
     brew install kubectl
+    brew install kustomize
     ```
 
-    Check that kubectl is installed
-
+    Check that kubectl, kustomize is installed, will get the version of installed command
     ```
     kubectl version
+    kustomize version
     ```
 
-## Exercise 1 Kubernetes Basic command line
-
-This exerise willl run under example-kubernetes folder
+## Exercise 1 Basic Kubernetes command line
 
 ### Connect to Kubernetes on GCP
 
@@ -199,11 +196,11 @@ For specifies the resources to be use example-app-kustomize/overlays/sit/patches
 ```
 resources:
     limits:
-        cpu: 200m
+        cpu: 500m
         memory: 512Mi
     requests:
-        cpu: 200m
-        memory: 512Mi
+        cpu: 250m
+        memory: 256Mi
 ```
 
 Then apply the kustomize to kubernetes
