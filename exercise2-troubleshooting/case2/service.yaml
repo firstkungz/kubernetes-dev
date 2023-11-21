@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app3
+  labels:
+    app: app3
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      # If you don't fix nodePort config, the port will be random from available ports
+      # nodePort: 30001
+  selector:
+    app: app3

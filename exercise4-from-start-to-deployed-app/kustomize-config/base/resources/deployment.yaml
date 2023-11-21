@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app4-kustomize
+  labels:
+    app.kubernetes.io/name: app4-kustomize
+    app.kubernetes.io/instance: app4-kustomize
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app4-kustomize
+      app.kubernetes.io/instance: app4-kustomize
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app4-kustomize
+        app.kubernetes.io/instance: app4-kustomize
+    spec:
+      containers:
+        - name: app4-kustomize
+          image: asia.gcr.io/poc-innovation-iot/training-kube/example-app:TAG
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: app4-kustomize-configmap-env
+            - secretRef:
+                name: app4-kustomize-secret-env
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            timeoutSeconds: 10
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            timeoutSeconds: 10
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            limits:
+              cpu: 50m
+              memory: 64Mi
+            requests:
+              cpu: 25m
+              memory: 32Mi
+          volumeMounts:
+            - name: app4-kustomize-configmap-file
+              mountPath: /configs/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: app4-kustomize-configmap-file
+          configMap:
+            name: app4-kustomize-configmap-file

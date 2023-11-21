@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources/deployment.yaml
+- resources/service.yaml
+configMapGenerator:
+- envs:
+  - configs/config.env
+  name: app4-kustomize-configmap-env
+- files:
+  - configs/config.yaml
+  name: app4-kustomize-configmap-file
+secretGenerator:
+- envs:
+  - secrets/secret.env
+  name: app4-kustomize-secret-env

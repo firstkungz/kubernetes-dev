@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    # ingress.gcp.kubernetes.io/pre-shared-cert: paotang-id-external-sit-th-service-co-in,paotang-id-sandbox-external-sit-th-service-co-in,paotang-pass-external-sit-th-service-co-in,paotang-pass-sandbox-external-sit-th-service-co-in
+    # ingress.kubernetes.io/force-ssl-redirect: "true"
+    # ingress.kubernetes.io/ssl-cert: paotang-id-external-sit-th-service-co-in,paotang-id-sandbox-external-sit-th-service-co-in,paotang-pass-external-sit-th-service-co-in,paotang-pass-sandbox-external-sit-th-service-co-in
+    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.global-static-ip-name: poc-incubator-static-ip
+
+  name: app4-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: app4-kustomize
+            port:
+              number: 8080
+      

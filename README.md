@@ -26,7 +26,7 @@ https://brew.sh/
     kustomize version
     ```
 
-## Exercise 1 Basic Kubernetes command line
+## Exercise 1 Playing with Kubernetes config and Command
 
 ### Connect to Kubernetes on GCP
 
@@ -44,7 +44,19 @@ kubectl get nodes
 
 ---
 
-### Example 1 - Try to get list resources with command
+### 1.1 - Create the components
+
+Try understanding what you will create in app1, app2
+
+Apply (Create / Update) the component specified in yaml files
+```
+kubectl apply -f configmap.yaml
+kubectl apply -f secret.yaml
+kubectl apply -f service.yaml
+kubectl apply -f deployment.yaml
+```
+
+### 1.2 - Try to get list resources with command
 
 Component in every namespaces
 
@@ -64,7 +76,7 @@ Describe information of component
 kubectl describe {component} {component_name}
 ```
 
-### Example 2 - Interaction with component
+### 1.3 - Interaction with component
 
 Execute command pods
 
@@ -73,16 +85,9 @@ kubectl exec -it {pods_name} {command}
 ```
 
 Entering pods (bash or others depend on how docker built)
-
+You can check either configuration type (env,file) and the service connection between them by try to ping.
 ```
 kubectl exec -it {pods_name} bash
-```
-
-Create / Update / Delete component (more information in deployment part)
-
-```
-    kubectl apply -f deployment.yaml
-    kubectl delete -f deployment.yaml
 ```
 
 Scale pods from deployment
@@ -97,29 +102,50 @@ Edit resource on the fly
 kubectl edit svc/docker-registry
 ```
 
+
 ---
 
-## Exercise 2 Try kustomize for deployment
 
-This exerise willl run under example-kustomize folder
+## Exercise 2 Troubleshooting
 
-Build kustomize into script for deployment
-Example for overlays sit
+There're some of cases found, during the hands-on will showing about the investigation step.
 
+
+## Exercise 3 Try kustomize for deployment
+
+This exerise willl run under kustomize-config folder
+
+At first you need to create namespace for simulate deploying to SIT / UAT
 ```
-kustomize build ./example-app-kustomize/overlays/sit
+kubectl create namespace app-{yourname}-sit
+kubectl create namespace app-{yourname}-uat
+```
+
+
+Preview apply script that kustomize built
+```
+kustomize build overlays/{env}
+```
+
+Example for overlays sit
+```
+kustomize build overlays/sit
 ```
 
 Deploy microservice to kubernetes by kustomize
 
 ```
-kustomize build {path_to_kustomize} | kubectl apply -n {namespace} -f -
+kubectl apply -n {namespace} -k overlays/{env}
 ```
 
-After this you need to try yourself for editing some of kustomize following readme.MD in example-app-kustomize
+So the rest of commands you need for deploy both SIT / UAT are
+```
+kubectl apply -n app-{yourname}-sit -k overlays/sit
+kubectl apply -n app-{yourname}-uat -k overlays/uat
+```
 
 
-## Exercise 3 From code to running service
+## Exercise 4 From code to running service
 Now if we have the http service that can running, how we can make it from nothing to running in kubernetes
 
 \* 
@@ -141,7 +167,6 @@ e.GET("/", func(c echo.Context) error {
 
 The next thing we need to do is how config injection into services
 
-
 Service read config (contain both file and env example, you can select which ways to do)
 ```
 	// Loading env config of path /configs/config.yaml
@@ -150,9 +175,6 @@ Service read config (contain both file and env example, you can select which way
 	viper.SetConfigName("config") // Register config file name (no extension)
 	viper.SetConfigType("yaml")   // Look for specific type
 	viper.ReadInConfig()
-
-	// Try to Dump all config from file by viper
-	fmt.Println(viper.AllSettings())
 
 	// Loading env config of key SOMECONFIGKEY
 	someConfig := os.Getenv("SOMECONFIGKEY")
@@ -167,46 +189,43 @@ The thing before we can run service in kubernetes, we need to packaging it insid
 You can see some explanation in Dockerfile
 
 ```
-docker build -t asia.gcr.io/poc-innovation-iot/training-kube/example-app:v1.5 ./example-app
+docker build -t asia.gcr.io/poc-innovation-iot/training-kube/example-app:v1.6 ./
 ```
 
 After you built the docker image, then we need to push the docker image to cloud
 
 ```
-docker push asia.gcr.io/poc-innovation-iot/training-kube/example-app:v1.5
+docker push asia.gcr.io/poc-innovation-iot/training-kube/example-app:v1.6
 ```
 
 
 ### Deployment by kustomize
 
-You need to ensure that image, tag that we push in the kustomization.yaml is correct
+- You need to ensure that image, tag that we push in the kustomization.yaml is correct
 
 file example-app-kustomize/overlays/sit/kustomization.yaml
 ```
 images:
   - name: asia.gcr.io/poc-innovation-iot/training-kube/example-app
-    newTag: v1.4
+    newTag: v1.x
 ```
 
-Then the configuration you need to enter the require configuration
-- Env - go to example-app-kustomize/overlays/sit/configs/config.env file
-- File - go to example-app-kustomize/overlays/sit/configs/config.yaml file
+- Then ensure configuration you need to using is valid for the environment you will be deployed
 
-For specifies the resources to be use example-app-kustomize/overlays/sit/patches/set_resources.yaml
-```
-resources:
-    limits:
-        cpu: 500m
-        memory: 512Mi
-    requests:
-        cpu: 250m
-        memory: 256Mi
-```
 
-Then apply the kustomize to kubernetes
+Then verify the kustomize build is valid before deploy.
 
 ```
-kustomize build ./example-app-kustomize/overlays/sit | kubectl apply -n {namespace} -f -
+kustomize build ./kustomize-config/overlays/sit 
 ```
 
-Then we finished on deployment service into kubernetes
+Then we will apply this by kustomize for deploy the service
+```
+kubectl apply -n {namespace} -k overlays/sit
+```
+
+
+(Bonus) Expose the service we already do to external by ingress.
+```
+kubectl apply -n {namespace} -f ingress.yaml
+```

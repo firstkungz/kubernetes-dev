@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: first-test-config
-data:
-  config.yaml: |
-    test:
-      someconfigkey: value

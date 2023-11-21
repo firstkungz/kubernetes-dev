@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app4-kustomize
+  labels:
+    app.kubernetes.io/name: app4-kustomize
+    app.kubernetes.io/instance: app4-kustomize
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: app4-kustomize
+    app.kubernetes.io/instance: app4-kustomize

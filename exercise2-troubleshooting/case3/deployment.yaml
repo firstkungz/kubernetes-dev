@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app3
+  labels:
+    app: app3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app3
+  template:
+    metadata:
+      labels:
+        app: app3
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: app3-config-volume
+              mountPath: /app/config
+              readOnly: true
+            - name: app3-secret-volume
+              mountPath: /app/secret
+              readOnly: true
+          resources:
+            limits:
+              cpu: 50m
+              memory: 64Gi
+            requests:
+              cpu: 50m
+              memory: 32Gi
+      volumes:
+        - name: app3-config-volume
+          configMap:
+            name: app3-configmap
+        - name: app3-secret-volume
+          secret:
+            secretName: app3-secret
