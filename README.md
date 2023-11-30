@@ -26,6 +26,11 @@ https://brew.sh/
     kustomize version
     ```
 
+- Install Gcloud Auth Plugin
+    ```
+    gcloud components install gke-gcloud-auth-plugin
+    ```
+
 ## Exercise 1 Playing with Kubernetes config and Command
 
 ### Connect to Kubernetes on GCP
